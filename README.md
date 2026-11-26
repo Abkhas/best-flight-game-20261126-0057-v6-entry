@@ -36,17 +36,28 @@ not down when it hits is lost.
   `DELIVERED n/12.0 T` + a BEST score.
 - A second decision: `ICING BUILDING: 1 CLIMB ABOVE IT / 2 STAY LOW, DE-ICE NOW`.
 
-## The flown proof
+## Flown proof
 
 The capture harness flies two real legs through the game's own input path
 (a proportional controller on `window.__kit.setDrive`) and lands on the ice
-strip for real. The record, verified in `checks.json`:
+strip for real. All 4 shots in `checks.json` show one consistent state —
+callsign POLAR 7, score 21,000, legsFlown 1, delivered 4.2 T, stars 3 —
+and **73/73 checks pass, 0 failures** (zero console errors, zero failed
+network requests).
 
-- Leg 1: load +1000, airborne +2000, gate +3000, soft touchdown +5000,
-  unload +4000 = **15,000** (4.2 T delivered).
-- Leg 2 to the gate: load +1000, airborne +2000, gate +3000 = **21,000**.
-- Cover score **21,000**, `DELIVERED 4.2 / 12.0 T`, `STARS 3 / 12` — earned,
-  not staged. Only the camera position is staged for the shot.
+- **Leg 1 — STATION RESUPPLY** (Eureka → Alert): load +1000, airborne
+  +2000, gate +3000, then a soft touchdown on the Alert ice strip —
+  sink 1.5 m/s, speed 48 KT, 2.4 m off-centreline, 86 m past threshold —
+  +5000, unload +4000 → **15,000**, 4.2 T delivered, 3 stars,
+  fuel 61% at unload.
+- **Leg 2 — MEDEVAC PICKUP** (Alert → Eureka): load +1000, airborne
+  +2000, gate +3000 → **21,000**. The BINGO-fuel decision genuinely
+  fired at 40% fuel and was answered PRESS ON on the real input path
+  (Digit2); the icing decision was answered DE-ICE, 52% → 5%.
+- **Proof screen:** medal SILVER, RANK B, BEST 21,000, storm 16:20
+  remaining, incident log clean — no hard landings, no icing events.
+- **Cover score 21,000**, `DELIVERED 4.2 / 12.0 T`, `STARS 3 / 12` —
+  earned, not staged. Only the camera position is staged for the shot.
 
 ## Controls
 
