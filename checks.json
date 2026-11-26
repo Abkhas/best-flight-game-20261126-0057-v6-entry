@@ -1,0 +1,330 @@
+{
+  "shots": [
+    {
+      "callsign": "POLAR 7",
+      "score": 21000,
+      "legsFlown": 1,
+      "delivered": 4.2,
+      "stars": 3,
+      "flight": "1:39"
+    },
+    {
+      "callsign": "POLAR 7",
+      "score": 21000,
+      "legsFlown": 1,
+      "delivered": 4.2,
+      "stars": 3,
+      "flight": "1:40"
+    },
+    {
+      "callsign": "POLAR 7",
+      "score": 21000,
+      "legsFlown": 1,
+      "delivered": 4.2,
+      "stars": 3,
+      "flight": "1:41"
+    },
+    {
+      "callsign": "POLAR 7",
+      "score": 21000,
+      "legsFlown": 1,
+      "delivered": 4.2,
+      "stars": 3,
+      "flight": "1:41"
+    }
+  ],
+  "checks": {
+    "boot: game object + first frames rendered": {
+      "pass": true,
+      "detail": "frames=9"
+    },
+    "boot: title screen visible": {
+      "pass": true,
+      "detail": ""
+    },
+    "boot: 4 legs listed on the flight plan": {
+      "pass": true,
+      "detail": ""
+    },
+    "boot: 3 pilot slots on title": {
+      "pass": true,
+      "detail": ""
+    },
+    "boot: turnaround refit row present": {
+      "pass": true,
+      "detail": ""
+    },
+    "boot: base card names Eureka Base ice strip": {
+      "pass": true,
+      "detail": ""
+    },
+    "play: cargo loaded for real (+1000)": {
+      "pass": true,
+      "detail": "score=1000"
+    },
+    "play: airborne for real (+2000, score 3000)": {
+      "pass": true,
+      "detail": "score=3000"
+    },
+    "play: gate passed for real (+3000, score 6000)": {
+      "pass": true,
+      "detail": "score=6000"
+    },
+    "play: touchdown on the ice strip for real (soft sink)": {
+      "pass": true,
+      "detail": "sink=1.5531604914718724 spd=24.758737373434926 off=2.4433297848709086"
+    },
+    "play: touchdown scores +5000 (score 11000)": {
+      "pass": true,
+      "detail": "score=11000"
+    },
+    "play: leg 1 delivered for real (4.2 T, score 15000)": {
+      "pass": true,
+      "detail": "delivered=4.2 score=15000"
+    },
+    "play: debrief measures recorded (sink, speed, off-centreline)": {
+      "pass": true,
+      "detail": "{\"name\":\"STATION RESUPPLY\",\"score\":15000,\"sink\":1.5531604914718724,\"speed\":24.758737373434926,\"off\":2.4433297848709086,\"flare\":-4,\"dist\":87,\"fuelLeft\":61,\"icing\":0,\"stars\":3,\"delivered\":4.2,\"soft\":true,\"fuelOk\":true}"
+    },
+    "play: fuel burned (not 100%)": {
+      "pass": true,
+      "detail": "fuel=61.06749719750374"
+    },
+    "play: storm clock ticking (under 18:00)": {
+      "pass": true,
+      "detail": "stormLeft=1012.4500000000614"
+    },
+    "play: proof screen auto-shows after leg 1": {
+      "pass": true,
+      "detail": ""
+    },
+    "play: leg 2 started from Alert (no refuel at a remote station)": {
+      "pass": true,
+      "detail": "phase=load fuel=60.670597197503696"
+    },
+    "play: medevac loaded for real (+1000, score 16000)": {
+      "pass": true,
+      "detail": "score=16000"
+    },
+    "play: leg 2 airborne (+2000, score 18000)": {
+      "pass": true,
+      "detail": "score=18000"
+    },
+    "play: leg 2 gate passed (+3000, score 21000)": {
+      "pass": true,
+      "detail": "score=21000"
+    },
+    "cover: Eureka base label ahead in frame": {
+      "pass": true,
+      "detail": "{\"visible\":true,\"x\":734,\"y\":415}"
+    },
+    "cover: lit Eureka ice strip ahead in frame": {
+      "pass": true,
+      "detail": "{\"visible\":true,\"x\":730,\"y\":512}"
+    },
+    "cover: earned score on the HUD (21000, matches the record)": {
+      "pass": true,
+      "detail": "score=21000"
+    },
+    "cover: score box does not overlap the storm box": {
+      "pass": true,
+      "detail": ""
+    },
+    "cover: delivered progress on the HUD (4.2 / 12.0 T)": {
+      "pass": true,
+      "detail": "DELIVERED 4.2 / 12.0 T · STARS 3 / 12"
+    },
+    "cover: storm timer on the HUD (counts down from 18:00)": {
+      "pass": true,
+      "detail": "16:21"
+    },
+    "cover: HUD shows altitude + speed + heading + throttle": {
+      "pass": true,
+      "detail": ""
+    },
+    "cover: objective shows live distance to the strip": {
+      "pass": true,
+      "detail": "FINAL — EUREKA STRIP 09 · 584 FT · GEAR DOWN"
+    },
+    "cover: radio log has the named voice (POLAR CONTROL · IVY)": {
+      "pass": true,
+      "detail": ""
+    },
+    "cover: manifest checklist visible with steps ticked": {
+      "pass": true,
+      "detail": ""
+    },
+    "cover: fuel decision banner visible (BINGO fuel, real choice)": {
+      "pass": true,
+      "detail": "FUEL LOW 40% — 1 DIVERT TO EUREKA · 2 PRESS ON"
+    },
+    "legibility: cover (no overflow / overlap / out-of-frame)": {
+      "pass": true,
+      "detail": "[]"
+    },
+    "cover: ONE big moment line visible (TOUCHDOWN ✓ 4.2 T DELIVERED)": {
+      "pass": true,
+      "detail": "TOUCHDOWN ✓ 4.2 T DELIVERED"
+    },
+    "cover: full gauge panel shown in the chase frame": {
+      "pass": true,
+      "detail": ""
+    },
+    "cover: coaching banner names IVY + the decision or the centreline": {
+      "pass": true,
+      "detail": "IVY · FUEL LOW — DIVERT OR PRESS ON, YOUR CALL"
+    },
+    "cover: landing-check panel reads live numbers against targets": {
+      "pass": true,
+      "detail": ""
+    },
+    "play: fuel decision answers on the real input path (Digit2 = PRESS ON)": {
+      "pass": true,
+      "detail": "decision=PRESS ON"
+    },
+    "legibility: night shot": {
+      "pass": true,
+      "detail": "[]"
+    },
+    "polish: no radio line truncates (scrollWidth fits)": {
+      "pass": true,
+      "detail": "POLAR 7 AIRBORNE — GEAR UP, CLIMBING 400/400 | IVY · FUEL LOW — DIVERT OR PRESS ON, YOUR CALL 400/400 | POLAR 7 PRESSING ON — WATCH THE FUEL 400/400 | IVY · ICING BUILDING — CLIMB OR DE-ICE, NOW 400/400"
+    },
+    "polish: big moment line hidden in the cockpit shot (cover only)": {
+      "pass": true,
+      "detail": ""
+    },
+    "polish: icing decision banner visible (2nd decision)": {
+      "pass": true,
+      "detail": "ICING 51% — 1 CLIMB ABOVE IT · 2 STAY LOW, DE-ICE NOW"
+    },
+    "polish: icing decision answers on the real input path (Digit2 = DE-ICE)": {
+      "pass": true,
+      "detail": "DE-ICE icing=4.9875"
+    },
+    "polish: coaching banner tells the pilot what to do": {
+      "pass": true,
+      "detail": "IVY · ON THE CENTRELINE — HOLD HER STEADY, FLARE AT 30 FT"
+    },
+    "polish: chart inset names the strait (stations + strips + front)": {
+      "pass": true,
+      "detail": ""
+    },
+    "play: cockpit panel lit (8 gauges drawn)": {
+      "pass": true,
+      "detail": ""
+    },
+    "legibility: proof screen": {
+      "pass": true,
+      "detail": "[]"
+    },
+    "proof: 6 honest debrief cells shown": {
+      "pass": true,
+      "detail": ""
+    },
+    "proof: total score cell shows the session score": {
+      "pass": true,
+      "detail": ""
+    },
+    "proof: landing sink + speed + off-centreline shown": {
+      "pass": true,
+      "detail": ""
+    },
+    "proof: session medal + rank + BEST score shown (real values)": {
+      "pass": true,
+      "detail": ""
+    },
+    "proof: rank letter computed from the session": {
+      "pass": true,
+      "detail": ""
+    },
+    "proof: debrief headline names the delivered leg": {
+      "pass": true,
+      "detail": "STATION RESUPPLY — 4.2 T DELIVERED · 3 STARS · SINK 1.6 M/S"
+    },
+    "proof: incident line from the record": {
+      "pass": true,
+      "detail": "INCIDENT LOG — CLEAN SESSION · NO HARD LANDINGS · NO ICING EVENTS · GUSTS PEAK 4.1 M/S"
+    },
+    "polish: flight recorder chart drawn from the real time-series": {
+      "pass": true,
+      "detail": ""
+    },
+    "polish: touchdown plan shows 4 measured numbers": {
+      "pass": true,
+      "detail": "TOUCHDOWN PLAN — STATION RESUPPLY SINK1.6 M/SSOFT ✓ < 3.0 SPEED48 KTTARGET 50–70 KT OFF CENTRELINE2.4 MLIMIT 12 M PAST THRESHOLD87 MSTRIP 09 · 300 M "
+    },
+    "proof: all 4 legs show a score/state": {
+      "pass": true,
+      "detail": ""
+    },
+    "proof: pilot-log progress line in the debrief note": {
+      "pass": true,
+      "detail": ""
+    },
+    "proof: persistent top + bottom bars visible": {
+      "pass": true,
+      "detail": ""
+    },
+    "legibility: title screen": {
+      "pass": true,
+      "detail": "[]"
+    },
+    "title: 4 legs with different goals listed": {
+      "pass": true,
+      "detail": ""
+    },
+    "title: leg 1 shows its earned score": {
+      "pass": true,
+      "detail": ""
+    },
+    "title: turnaround refit row visible (live points)": {
+      "pass": true,
+      "detail": ""
+    },
+    "title: persistent top + bottom bars visible": {
+      "pass": true,
+      "detail": ""
+    },
+    "title: top bar shows the session score": {
+      "pass": true,
+      "detail": ""
+    },
+    "polish: count banner in the largest numerals (4 · 12.0 · 12)": {
+      "pass": true,
+      "detail": "4 LEGS·12.0 T CARGO·12 STARS"
+    },
+    "consistency: proof vs title record identical": {
+      "pass": true,
+      "detail": "[{\"callsign\":\"POLAR 7\",\"score\":21000,\"legsFlown\":1,\"delivered\":4.2,\"stars\":3,\"flight\":\"1:41\"},{\"callsign\":\"POLAR 7\",\"score\":21000,\"legsFlown\":1,\"delivered\":4.2,\"stars\":3,\"flight\":\"1:41\"}]"
+    },
+    "zero console errors": {
+      "pass": true,
+      "detail": ""
+    },
+    "zero failed network requests": {
+      "pass": true,
+      "detail": ""
+    },
+    "file: 01-cover.jpg exists (208 KB, ≤256 KiB)": {
+      "pass": true,
+      "detail": "213034 bytes"
+    },
+    "file: 02-night.jpg exists (192 KB, ≤256 KiB)": {
+      "pass": true,
+      "detail": "196745 bytes"
+    },
+    "file: 03-proof.jpg exists (162 KB, ≤256 KiB)": {
+      "pass": true,
+      "detail": "166159 bytes"
+    },
+    "file: 04-title.jpg exists (186 KB, ≤256 KiB)": {
+      "pass": true,
+      "detail": "190916 bytes"
+    },
+    "contact sheet built": {
+      "pass": true,
+      "detail": ""
+    }
+  }
+}

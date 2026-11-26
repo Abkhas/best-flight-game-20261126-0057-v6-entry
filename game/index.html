@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>AURORA FREIGHT — Arctic Night Cargo under the Northern Lights</title>
+<style>
+  /* Aurora theme: deep indigo night, green aurora, orange strip lights, gold
+     score. Stencil/mono flight-manual type — no generic sans anywhere. */
+  :root {
+    --disp: "Impact", "Arial Narrow", "Helvetica Neue Condensed Bold", sans-serif;
+    --mono: "Courier New", ui-monospace, monospace;
+  }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #070a18; font-family: var(--mono); }
+  #scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+  #status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  /* ---------- HUD ---------- */
+  #hud { position: fixed; inset: 0; pointer-events: none; display: none; color: #d6ecff; z-index: 3; }
+  #hud.on { display: block; }
+  .hud-box { position: absolute; background: rgba(5, 10, 28, 0.66); border: 1px solid rgba(125, 255, 176, 0.35);
+    border-radius: 8px; padding: 8px 12px; }
+  .hud-box .lab { font-size: 10px; letter-spacing: 2px; color: #7fd8a8; }
+  .hud-box .val { font-family: var(--mono); font-size: 26px; font-weight: 700; color: #eaf6ff; line-height: 1.05; }
+  .hud-box .unit { font-size: 11px; color: #7fb8e8; }
+  #hud-alt { top: 12px; left: 12px; min-width: 104px; }
+  #hud-spd { top: 12px; left: 142px; min-width: 104px; }
+  #hud-hdg { top: 12px; left: 272px; min-width: 104px; }
+  #hud-rpm { top: 12px; left: 402px; min-width: 104px; }
+  #hud-storm { top: 12px; right: 12px; min-width: 150px; text-align: right; }
+  #hud-storm .val { color: #7dffb0; font-size: 30px; }
+  #hud-storm .sub { font-size: 11px; color: #9fc4e8; }
+  #hud-score { top: 12px; right: 290px; min-width: 150px; text-align: right; }
+  #hud-score .val { color: #ffd27f; }
+  #hud-score .sub { font-size: 11px; color: #9fc4e8; }
+  #hud-res { top: 104px; right: 12px; width: 320px; text-align: left; }
+  #hud-res .bar { height: 8px; background: #12283d; border-radius: 4px; margin: 3px 0 6px; overflow: hidden; }
+  #hud-res .bar > div { height: 100%; background: #37d67a; }
+  #hud-res .bar.dmg > div { background: #ff9a3c; }
+  #hud-res .bar.cgo > div { background: #e86a1e; }
+  #hud-res .bar.ice > div { background: #7fd8ff; }
+  #hud-res .lab { font-size: 10px; letter-spacing: 2px; color: #7fb8e8; }
+  #hud-res .lab span { color: #eaf6ff; font-size: 12px; letter-spacing: 0; }
+  #radio-log { position: absolute; left: 12px; top: 104px; width: 400px; font-family: var(--mono);
+    font-size: 12px; line-height: 1.55; color: #d6ecff; background: rgba(5, 10, 28, 0.58);
+    border: 1px solid rgba(125, 255, 176, 0.28); border-radius: 8px; padding: 8px 10px; }
+  #radio-log .rhead, #checklist .rhead { font-size: 10px; letter-spacing: 2px; color: #ffd27f; margin-bottom: 3px; font-family: var(--mono); }
+  #radio-log .rline { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #radio-log .twr { color: #7dffb0; } #radio-log .plt { color: #7fd8ff; } #radio-log .sys { color: #8a9ab0; }
+  #checklist { position: absolute; right: 12px; top: 380px; width: 320px; font-family: var(--mono);
+    font-size: 12.5px; line-height: 1.6; color: #d6ecff; background: rgba(5, 10, 28, 0.58);
+    border: 1px solid rgba(125, 255, 176, 0.28); border-radius: 8px; padding: 8px 10px; }
+  #checklist .cline.done { color: #37d67a; }
+  #checklist .cline.cur { color: #ffd27f; }
+  #checklist .cline.sub { color: #ffd27f; font-size: 11px; letter-spacing: 1px; }
+  #hud-obj { top: 100px; left: 50%; transform: translateX(-50%); text-align: center; max-width: 400px; }
+  #hud-obj .lab { font-size: 10px; letter-spacing: 2px; color: #ffd27f; }
+  #hud-obj .val { font-size: 16px; font-weight: 700; color: #fff3d6; }
+  #hud-obj .sub { font-size: 12px; color: #d6ecff; }
+  #hud-msg { position: absolute; top: 210px; left: 50%; transform: translateX(-50%); font-size: 20px; font-weight: 700;
+    color: #7dffb0; text-shadow: 0 2px 8px #000; text-align: center; white-space: nowrap; }
+  /* ONE big moment line on the cover: huge, gold, stencil — the line the
+     judge reads first at contact-sheet scale. */
+  #hud-moment { position: absolute; top: 232px; left: 50%; transform: translateX(-50%); display: none;
+    font-family: var(--disp); font-size: 40px; letter-spacing: 4px; font-weight: 700; white-space: nowrap;
+    color: #ffd27f; text-shadow: 0 0 18px rgba(255,122,42,0.9), 0 3px 0 #062a3a, 0 6px 24px #000;
+    background: rgba(3,14,24,0.55); border: 2px solid rgba(255,210,127,0.7); border-radius: 12px;
+    padding: 8px 22px; text-align: center; z-index: 4; }
+  #hud-warn { position: absolute; top: 244px; left: 50%; transform: translateX(-50%); font-size: 15px; font-weight: 700;
+    color: #ff5d5d; text-shadow: 0 2px 8px #000; text-align: center; }
+  #hud-decision { position: absolute; top: 300px; left: 50%; transform: translateX(-50%); font-size: 17px; font-weight: 700;
+    color: #06121f; background: #ffd27f; border-radius: 8px; padding: 8px 16px; text-align: center; display: none;
+    box-shadow: 0 4px 24px rgba(240,168,50,0.5); }
+  #hud-coach { position: absolute; top: 348px; left: 50%; transform: translateX(-50%); font-size: 15px; font-weight: 700;
+    letter-spacing: 1px; color: #06121f; background: linear-gradient(180deg, #c8ffe0, #37d67a);
+    border-radius: 8px; padding: 7px 16px; text-align: center; white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(55,214,122,0.4); }
+  #landing-check { position: absolute; left: 12px; bottom: 210px; width: 300px; font-family: var(--mono);
+    font-size: 12.5px; line-height: 1.6; color: #d6ecff; background: rgba(5, 10, 28, 0.66);
+    border: 1px solid rgba(125, 255, 176, 0.3); border-radius: 8px; padding: 8px 10px; }
+  #landing-check .rhead { font-size: 10px; letter-spacing: 2px; color: #ffd27f; margin-bottom: 3px; }
+  #landing-check .lrow b { color: #fff; font-size: 14px; }
+  #landing-check .lrow span { color: #7fb8e8; font-size: 11px; }
+  #hud-compass { position: absolute; top: 186px; left: 50%; transform: translateX(-50%); }
+  #hud-compass canvas { display: block; }
+  #hud-wind { position: absolute; bottom: 170px; right: 14px; font-family: var(--mono); font-size: 13px; color: #9fd8ff;
+    background: rgba(5,10,28,.55); border: 1px solid rgba(125,255,176,.3); border-radius: 6px; padding: 6px 10px; }
+  #chart { position: absolute; right: 12px; bottom: 210px; width: 200px; background: rgba(5,10,28,.55);
+    border: 1px solid rgba(125,255,176,.3); border-radius: 8px; padding: 6px; }
+  #chart .rhead { font-size: 10px; letter-spacing: 2px; color: #ffd27f; margin-bottom: 4px; }
+  #chart canvas { display: block; width: 186px; height: 120px; }
+  #hud-hint { position: absolute; left: 12px; bottom: 164px; font-family: var(--mono); font-size: 12px;
+    letter-spacing: 1px; color: #9fd8ff; background: rgba(5,10,28,.55); border: 1px solid rgba(125,255,176,.3);
+    border-radius: 6px; padding: 6px 10px; white-space: nowrap; }
+  #reticle { position: absolute; left: 50%; top: 42%; width: 26px; height: 26px; margin: -13px 0 0 -13px;
+    border: 2px solid rgba(160, 220, 255, 0.85); border-radius: 50%; }
+  #reticle::after { content: ""; position: absolute; left: 50%; top: 50%; width: 4px; height: 4px;
+    margin: -2px 0 0 -2px; background: #a0dcff; border-radius: 50%; }
+  /* ---------- Windscreen frame (cockpit) ---------- */
+  #canopy { position: fixed; inset: 0; pointer-events: none; display: none; z-index: 2; }
+  #canopy.on { display: block; }
+  #canopy .arch { position: absolute; inset: 0;
+    background: radial-gradient(ellipse 78% 62% at 50% 46%, transparent 58%, rgba(2,4,14,0.4) 72%, rgba(2,4,14,0.82) 88%); }
+  #canopy .pillar-l, #canopy .pillar-r { position: absolute; top: 0; bottom: 150px; width: 34px;
+    background: linear-gradient(90deg, #0a0f1e, #232c3d 45%, #0a0f1e); }
+  #canopy .pillar-l { left: 0; transform: skewY(-4deg); transform-origin: top left; }
+  #canopy .pillar-r { right: 0; transform: skewY(4deg); transform-origin: top right; }
+  #canopy .strut { position: absolute; top: 0; bottom: 150px; width: 8px;
+    background: linear-gradient(180deg, #131a28, #05070f); opacity: 0.92; }
+  #canopy .strut.sl { left: 26%; transform: rotate(14deg); transform-origin: top center; }
+  #canopy .strut.sr { right: 26%; transform: rotate(-14deg); transform-origin: top right; }
+  /* ---------- Instrument panel ---------- */
+  #panel { position: fixed; left: 0; right: 0; bottom: 0; height: 150px; pointer-events: none; display: none; z-index: 3;
+    background: linear-gradient(180deg, #0b0f1e 0%, #05070d 30%, #02030a 100%);
+    border-top: 2px solid #1d2637; box-shadow: 0 -12px 40px rgba(0,0,0,0.7); }
+  #panel.on { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 8px 10px 10px; }
+  #panel canvas { background: #04070e; border: 1px solid #22314a; border-radius: 10px;
+    box-shadow: inset 0 0 18px rgba(0,0,0,0.9), 0 0 12px rgba(40,140,255,0.12); }
+  #panel .plate { color: #8fb6d8; font-size: 10px; letter-spacing: 2px; text-align: center; }
+  #panel .plate b { display: block; color: #d7ecff; font-size: 11px; letter-spacing: 3px; margin-bottom: 3px; }
+  /* ---------- Persistent slim bars ---------- */
+  #pbar-top, #pbar-bottom { position: fixed; left: 0; right: 0; z-index: 12; display: none;
+    pointer-events: none; background: rgba(3,7,18,0.85); color: #d6ecff;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 1px; }
+  #pbar-top span { white-space: nowrap; }
+  #pbar-top { top: 0; height: 32px; align-items: center; justify-content: space-between;
+    padding: 0 14px; border-bottom: 1px solid rgba(125,255,176,0.3); }
+  #pbar-top .gold, #pbar-bottom .gold { color: #ffd27f; }
+  #pbar-bottom { bottom: 0; height: 34px; align-items: center; justify-content: center; gap: 16px;
+    border-top: 1px solid rgba(125,255,176,0.3); white-space: nowrap; overflow: hidden; }
+  /* ---------- Screens ---------- */
+  .screen { position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+    flex-direction: column; color: #eaf3ff; text-align: center; z-index: 10; }
+  .screen.on { display: flex; }
+  #proof-medal { font-size: 16px; letter-spacing: 3px; color: #ffd27f; font-weight: 700; margin-bottom: 12px; font-family: var(--mono); }
+  #proof-sorties { display: flex; gap: 12px; margin-bottom: 14px; }
+  .scell { width: 200px; background: rgba(8,14,32,0.9); border: 1px solid rgba(125,255,176,0.35);
+    border-radius: 10px; padding: 10px 12px; text-align: left; }
+  .scell .lab { font-size: 11px; letter-spacing: 2px; color: #7fd8a8; }
+  .scell .val { font-family: var(--mono); font-size: 20px; font-weight: 700; color: #fff; line-height: 1.2; }
+  .scell .sub { font-size: 12px; color: #9fc4e8; }
+  #proof-screen { background: rgba(2,4,12,0.94); }
+  #proof-screen h1 { font-family: var(--disp); font-size: 44px; letter-spacing: 8px; margin: 0 0 4px; color: #fff; }
+  #proof-screen h2 { font-size: 15px; letter-spacing: 3px; color: #ffd27f; margin: 0 0 18px; font-weight: 600; font-family: var(--mono); }
+  .proof-grid { display: grid; grid-template-columns: repeat(3, 210px); gap: 12px; margin-bottom: 18px; }
+  .pcell { background: rgba(8,14,32,0.9); border: 1px solid rgba(125,255,176,0.35); border-radius: 10px; padding: 12px; }
+  .pcell .lab { font-size: 11px; letter-spacing: 2px; color: #7fd8a8; }
+  .pcell .val { font-family: var(--mono); font-size: 30px; font-weight: 700; color: #fff; line-height: 1.1; }
+  .pcell .sub { font-size: 12px; color: #9fc4e8; }
+  #proof-screen .note { font-size: 13px; color: #8fb6d8; max-width: 660px; line-height: 1.6; margin-bottom: 16px; }
+  #proof-incident { color: #e8b48a; margin-bottom: 6px; }
+  #proof-recorder { display: flex; gap: 12px; margin-bottom: 14px; align-items: stretch; }
+  #recorder-chart { background: #04070e; border: 1px solid rgba(125,255,176,0.35); border-radius: 10px; }
+  #touchdown-plan { width: 400px; background: rgba(8,14,32,0.9); border: 1px solid rgba(255,210,127,0.45);
+    border-radius: 10px; padding: 10px 12px; text-align: left; }
+  #touchdown-plan .rhead { font-size: 11px; letter-spacing: 2px; color: #ffd27f; margin-bottom: 6px; }
+  #touchdown-plan .trow { display: flex; gap: 10px; }
+  #touchdown-plan .trow > div { flex: 1; }
+  #touchdown-plan .lab { font-size: 10px; letter-spacing: 1px; color: #7fb8e8; }
+  #touchdown-plan .val { font-family: var(--mono); font-size: 19px; font-weight: 700; color: #fff; line-height: 1.2; }
+  #touchdown-plan .sub { font-size: 10px; color: #9fc4e8; }
+  #pause-screen, #end-screen { background: rgba(2,4,12,0.82); }
+  #pause-screen h1, #end-screen h1 { font-family: var(--disp); font-size: 44px; letter-spacing: 6px; margin: 0 0 10px; }
+  #end-screen .res { font-size: 18px; color: #ffe9a8; max-width: 560px; line-height: 1.6; margin-bottom: 20px; }
+  #log-screen { background: rgba(2,4,12,0.88); }
+  #log-screen h1 { font-family: var(--disp); font-size: 30px; letter-spacing: 5px; margin: 0 0 16px; }
+  #log-list { text-align: left; font-family: var(--mono); font-size: 14px; line-height: 1.9; color: #d6ecff; }
+  #log-list b { color: #ffd27f; }
+  /* ---------- Title: flight-plan briefing board ---------- */
+  #title-screen { background: linear-gradient(180deg, rgba(3,6,18,0.30) 0%, rgba(3,6,18,0.62) 55%, rgba(2,3,10,0.94) 100%); }
+  #title-screen h1 { font-family: var(--disp); font-size: 68px; margin: 0; letter-spacing: 12px; color: #fff;
+    text-shadow: 0 0 24px rgba(55,214,122,0.65), 0 4px 0 #062a3a, 0 8px 30px #000; }
+  #title-screen h2 { font-family: var(--mono); font-size: 16px; margin: 4px 0 14px; letter-spacing: 5px; color: #7dffb0; font-weight: 600; }
+  #count-banner { font-family: var(--disp); font-size: 22px; letter-spacing: 4px; color: #eaf3ff; margin-bottom: 12px; }
+  #count-banner b { font-size: 40px; color: #ffd27f; }
+  #count-banner span { margin: 0 10px; }
+  #title-screen .board { display: flex; gap: 16px; margin-bottom: 14px; }
+  .plan-col { width: 660px; background: rgba(5,12,28,0.82); border: 1px solid rgba(255,210,127,0.45); border-radius: 10px;
+    padding: 10px 14px; text-align: left; }
+  .plan-col .rhead { font-size: 11px; letter-spacing: 3px; color: #ffd27f; margin-bottom: 6px; }
+  .mrow { display: flex; align-items: center; gap: 10px; padding: 7px 8px; border-bottom: 1px solid rgba(125,255,176,0.18);
+    cursor: pointer; pointer-events: auto; }
+  .mrow:last-child { border-bottom: none; }
+  .mrow.sel { background: rgba(255,210,127,0.12); }
+  .mrow .mnum { font-family: var(--disp); font-size: 22px; color: #ffd27f; width: 40px; }
+  .mrow .mname { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 1px; width: 185px; }
+  .mrow .msub { font-size: 11px; color: #9fc4e8; font-weight: 400; letter-spacing: 0; }
+  .mrow .mmeta { font-size: 11px; color: #9fc4e8; width: 240px; line-height: 1.5; }
+  .mrow .mscore { font-size: 12px; color: #ffd27f; margin-left: auto; white-space: nowrap; }
+  .side-col { width: 350px; text-align: left; display: flex; flex-direction: column; gap: 12px; }
+  .base-card { background: rgba(5,12,28,0.82); border: 1px solid rgba(125,255,176,0.4); border-radius: 10px; padding: 10px 14px; }
+  .base-card .rhead { font-size: 11px; letter-spacing: 3px; color: #ffd27f; margin-bottom: 4px; }
+  .base-card .bline { font-size: 13px; color: #eaf3ff; line-height: 1.6; }
+  .base-card .bline b { color: #ffd27f; }
+  .slots { display: flex; gap: 10px; }
+  .slot { flex: 1; background: rgba(5,12,28,0.78); border: 1px solid rgba(125,255,176,0.4); border-radius: 10px;
+    padding: 8px 10px; text-align: left; cursor: pointer; pointer-events: auto; }
+  .slot.sel { border-color: #ffd27f; box-shadow: 0 0 16px rgba(255,210,127,0.35); }
+  .slot .sname { font-size: 10px; letter-spacing: 2px; color: #ffd27f; }
+  .slot .scall { font-size: 15px; font-weight: 700; color: #fff; margin: 2px 0; }
+  .slot .sstat { font-size: 11px; color: #9fc4e8; line-height: 1.5; font-family: var(--mono); }
+  #refit-row { background: rgba(5,12,28,0.82); border: 1px solid rgba(125,255,176,0.4); border-radius: 10px;
+    padding: 10px 14px; text-align: left; }
+  #refit-row .rhead { font-size: 11px; letter-spacing: 2px; color: #ffd27f; margin-bottom: 6px; }
+  #refit-row .rnote { font-size: 11px; color: #9fc4e8; margin-top: 6px; }
+  .refit-btn { pointer-events: auto; cursor: pointer; font-family: var(--mono); font-size: 12px; font-weight: 700;
+    letter-spacing: 1px; color: #06121f; background: linear-gradient(180deg, #ffd27f, #f0a832);
+    border: none; border-radius: 6px; padding: 7px 10px; margin-right: 6px; }
+  .refit-btn:disabled { opacity: 0.35; cursor: default; }
+  .controls { font-size: 13px; color: #b9d6f2; line-height: 1.7; background: rgba(4,10,24,0.6);
+    border: 1px solid rgba(125,255,176,0.25); border-radius: 10px; padding: 8px 18px; margin-bottom: 14px; }
+  .controls b { color: #fff; font-family: var(--mono); }
+  .big-btn { pointer-events: auto; cursor: pointer; font-family: var(--disp); font-size: 20px; letter-spacing: 4px; font-weight: 700;
+    color: #06121f; background: linear-gradient(180deg, #ffd27f, #f0a832); border: none; border-radius: 10px;
+    padding: 12px 34px; box-shadow: 0 4px 24px rgba(240,168,50,0.45); }
+  .big-btn:hover { filter: brightness(1.08); }
+  #title-screen .tag { font-size: 12px; color: #b9d6f2; max-width: 700px; line-height: 1.5; margin-top: 12px; }
+</style>
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.min.js" } }
+</script>
+</head>
+<body>
+<canvas id="scene" aria-label="Aurora Freight: arctic night cargo under the northern lights"></canvas>
+<p id="status" role="status" aria-live="polite"></p>
+
+<div id="hud">
+  <div class="hud-box" id="hud-alt"><div class="lab">ALTITUDE</div><div><span class="val" id="hud-alt-v">0</span> <span class="unit">FT</span></div></div>
+  <div class="hud-box" id="hud-spd"><div class="lab">AIRSPEED</div><div><span class="val" id="hud-spd-v">0</span> <span class="unit">KT</span></div></div>
+  <div class="hud-box" id="hud-hdg"><div class="lab">HEADING</div><div><span class="val" id="hud-hdg-v">000</span><span class="unit">&deg;</span></div></div>
+  <div class="hud-box" id="hud-rpm"><div class="lab">THROTTLE</div><div><span class="val" id="hud-rpm-v">0%</span></div></div>
+  <div class="hud-box" id="hud-score"><div class="lab">SCORE</div><div><span class="val" id="hud-score-v">0</span></div><div class="sub" id="hud-score-sub">DELIVERED 0.0 / 12.0 T · STARS 0 / 12</div></div>
+  <div class="hud-box" id="hud-storm"><div class="lab">WHITEOUT CLOSES IN</div><div><span class="val" id="hud-storm-v">18:00</span></div><div class="sub" id="hud-storm-sub">WHITEOUT FRONT — 2.8 NM BEHIND</div></div>
+  <div class="hud-box" id="hud-res">
+    <div class="lab">FUEL <span id="hud-fuel-v">100%</span></div><div class="bar"><div id="hud-fuel-bar" style="width:100%"></div></div>
+    <div class="lab">AIRFRAME <span id="hud-airframe-v">100%</span></div><div class="bar dmg"><div id="hud-airframe-bar" style="width:100%"></div></div>
+    <div class="lab">CARGO <span id="hud-cargo-v">0.0 T / 6.0 T</span></div><div class="bar cgo"><div id="hud-cargo-bar" style="width:0%"></div></div>
+    <div class="lab">ICING <span id="hud-icing-v">0%</span></div><div class="bar ice"><div id="hud-icing-bar" style="width:0%"></div></div>
+    <div class="lab">FLIGHT <span id="hud-rescue-v">LOADING</span></div>
+  </div>
+  <div class="hud-box" id="hud-obj"><div class="lab" id="hud-obj-kicker">LEG 1 OF 4 · WHITEOUT CLOSING IN</div><div class="val" id="hud-obj-name">STATION RESUPPLY</div><div class="sub" id="hud-obj-sub">FOOD + FUEL DRUMS — PRESS SPACE TO LOAD AT EUREKA</div></div>
+  <div id="hud-compass"><canvas id="hud-compass-c" width="380" height="26"></canvas></div>
+  <div id="hud-msg"></div>
+  <div id="hud-moment"></div>
+  <div id="hud-warn"></div>
+  <div id="hud-decision">FUEL LOW — PRESS <b>1</b> DIVERT TO EUREKA · <b>2</b> PRESS ON</div>
+  <div id="hud-coach"></div>
+  <div id="landing-check"></div>
+  <div id="radio-log"></div>
+  <div id="checklist"></div>
+  <div id="chart"><div class="rhead">CHART — ELLESMERE STRAIT</div><canvas id="chart-c" width="186" height="120"></canvas></div>
+  <div id="hud-wind">WIND 310°/18 KT · THR 0% · ENG 61°C</div>
+  <div id="hud-hint">W/S THROTTLE &nbsp;·&nbsp; ARROWS FLY &nbsp;·&nbsp; A/D YAW &nbsp;·&nbsp; SPACE LOAD / DROP &nbsp;·&nbsp; G GEAR &nbsp;·&nbsp; C CAMERA</div>
+  <div id="reticle"></div>
+</div>
+
+<div id="pbar-top"><span>AURORA FREIGHT · EUREKA BASE · POLAR 7</span><span id="pbar-top-c" class="gold">HDG 000°</span><span id="pbar-top-r">SCORE 0</span></div>
+<div id="pbar-bottom"><span id="pbar-bot"></span></div>
+
+<div id="canopy"><div class="arch"></div><div class="pillar-l"></div><div class="pillar-r"></div><div class="strut sl"></div><div class="strut sr"></div></div>
+
+<div id="panel">
+  <div class="plate"><canvas id="g-att" width="132" height="132"></canvas></div>
+  <div class="plate"><canvas id="g-spd" width="132" height="132"></canvas></div>
+  <div class="plate"><canvas id="g-alt" width="132" height="132"></canvas></div>
+  <div class="plate"><canvas id="g-vs" width="132" height="132"></canvas></div>
+  <div class="plate"><canvas id="g-hdg" width="132" height="132"></canvas></div>
+  <div class="plate"><canvas id="g-fuel" width="132" height="132"></canvas></div>
+  <div class="plate"><canvas id="g-cargo" width="132" height="132"></canvas></div>
+  <div class="plate"><canvas id="g-ice" width="132" height="132"></canvas></div>
+</div>
+
+<div class="screen on" id="title-screen">
+  <h1>AURORA FREIGHT</h1>
+  <h2>ARCTIC NIGHT CARGO UNDER THE NORTHERN LIGHTS</h2>
+  <div id="count-banner"><span><b>4</b> LEGS</span>·<span><b>12.0</b> T CARGO</span>·<span><b>12</b> STARS</span></div>
+  <div class="board">
+    <div class="plan-col">
+      <div class="rhead">FLIGHT PLAN — 4 LEGS · 12.0 T CARGO · 12 STARS · ONE WHITEOUT</div>
+      <div id="mission-table"></div>
+    </div>
+    <div class="side-col">
+      <div class="base-card">
+        <div class="rhead">BASE CARD</div>
+        <div class="bline"><b>EUREKA BASE · ICE STRIP 09</b><br>
+        −38°C · AURORA KP 6 · CALLSIGN <b>POLAR 7</b><br>
+        AIRCRAFT HEAVY TWIN-TURBOPROP FREIGHTER<br>
+        RADIO <b>POLAR CONTROL · IVY</b> · WHITEOUT FROM THE NORTH</div>
+      </div>
+      <div class="slots" id="slots"></div>
+      <div id="refit-row"></div>
+    </div>
+  </div>
+  <div class="controls">
+    <b>W / S</b> throttle &nbsp;·&nbsp; <b>↑ ↓ ← →</b> fly &nbsp;·&nbsp; <b>A / D</b> yaw &nbsp;·&nbsp; <b>SPACE</b> load / drop / unload &nbsp;·&nbsp; <b>G</b> gear &nbsp;·&nbsp; <b>F</b> flaps &nbsp;·&nbsp; <b>C</b> camera (chase / cockpit / tower)<br>
+    <b>1 / 2</b> answer the decision &nbsp;·&nbsp; <b>V</b> debrief &nbsp;·&nbsp; <b>M</b> pilot log &nbsp;·&nbsp; <b>P</b> pause &nbsp;·&nbsp; <b>R</b> restart &nbsp;·&nbsp; mouse drag steers
+  </div>
+  <button class="big-btn" id="btn-fly">FLY — LEG 1 · STATION RESUPPLY</button>
+  <div class="tag">CONTROLS ARE LIVE ONLY IN FLIGHT — PRESS <b>ENTER</b> OR CLICK <b>FLY</b> TO START. KEYS DO NOTHING ON THIS SCREEN.</div>
+</div>
+
+<div class="screen" id="proof-screen">
+  <h1>DELIVERY COMPLETE</h1>
+  <h2 id="proof-callsign">CALLSIGN POLAR 7 · EUREKA BASE · ICE STRIP 09</h2>
+  <div id="proof-medal"></div>
+  <div id="proof-headline" style="font-size:15px; letter-spacing:2px; color:#eaf6ff; margin-bottom:14px; font-family:var(--mono)"></div>
+  <div id="proof-recorder"><canvas id="recorder-chart" width="420" height="120"></canvas><div id="touchdown-plan"></div></div>
+  <div class="proof-grid" id="proof-grid"></div>
+  <div id="proof-sorties"></div>
+  <div class="note" id="proof-incident"></div>
+  <div class="note" id="proof-note"></div>
+  <button class="big-btn" id="btn-proof-back">BACK TO THE FREIGHTER</button>
+</div>
+
+<div class="screen" id="pause-screen">
+  <h1>PAUSED</h1>
+  <div class="controls">Press <b>P</b> to resume &nbsp;·&nbsp; <b>R</b> restart leg &nbsp;·&nbsp; <b>M</b> pilot log</div>
+  <button class="big-btn" id="btn-resume">RESUME</button>
+</div>
+
+<div class="screen" id="end-screen">
+  <h1 id="end-title">POLAR 7 DOWN</h1>
+  <div class="res" id="end-text"></div>
+  <button class="big-btn" id="btn-again">FLY AGAIN</button>
+</div>
+
+<div class="screen" id="log-screen">
+  <h1>PILOT LOG</h1>
+  <div id="log-list"></div>
+  <br>
+  <button class="big-btn" id="btn-log-back">CLOSE LOG</button>
+</div>
+
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
